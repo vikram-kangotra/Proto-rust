@@ -10,7 +10,7 @@ pub struct Lexer {
 impl Lexer {
 
     pub fn new(input: String) -> Lexer {
-        Lexer { input, start: 0, current: 0 , line: 0}
+        Lexer { input, start: 0, current: 0 , line: 1}
     }
 
     pub fn next_token(&mut self) -> Token {
@@ -94,7 +94,7 @@ impl Lexer {
             }
             ret.push(token);
         }
-
+        ret.push(Token::new(TokenType::Eof, String::new()));
         return ret;
     }
 
@@ -116,7 +116,12 @@ impl Lexer {
         loop {
             let ch = self.peek();
             match ch {
-                '\0' | '\n' => { break; }
+                '\0' => { break; }
+                '\n' => {
+                    self.line += 1;
+                    self.advance();
+                    return;
+                }
                 _ => { self.advance(); }
             }
         }
@@ -132,7 +137,11 @@ impl Lexer {
     }
 
     fn peek(&self) -> char {
-        self.input.chars().nth(self.current).unwrap()
+        if self.current >= self.input.len() {
+            '\0'
+        } else {
+            self.input.chars().nth(self.current).unwrap()
+        }
     }
 
     fn advance(&mut self) -> char {
@@ -174,7 +183,7 @@ impl Lexer {
             self.advance();
         }
         if self.peek() == '\0' {
-            return Token::new(TokenType::Unknown, String::new());
+            return Token::new(TokenType::Unknown, "Unterimated string".to_owned());
         }
         self.advance();
         return Token::new(TokenType::StringLiteral, 

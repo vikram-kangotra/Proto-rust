@@ -3,8 +3,26 @@ use std::env::args;
 use std::fs::File;
 use std::io::prelude::*;
 
+mod lexer;
+mod token;
+mod expr;
+mod parser;
+mod ast_printer;
+
+use crate::lexer::Lexer;
+use crate::parser::Parser;
+use crate::ast_printer::AstPrinter;
+
 fn eval(code: &str) {
-    print!("{}", code);
+    let mut lexer = Lexer::new(code.to_owned());
+
+    let tokens = lexer.tokens();
+    let mut parser = Parser::new(tokens);
+    let expr = parser.parse();
+
+    let mut ast_printer = AstPrinter{};
+
+    print!("{}", ast_printer.eval(&expr));
 }
 
 fn repl() {

@@ -21,6 +21,10 @@ impl Parser {
     }
 
     pub fn parse(&mut self) -> Box<dyn Expr> {
+        self.expr()
+    }
+
+    pub fn expr(&mut self) -> Box<dyn Expr> {
         self.term()
     }
 
@@ -57,6 +61,11 @@ impl Parser {
         if self.match_token(TokenType::NumberLiteral) {
             return Box::new(Literal::new(self.pull()));
         }
+        if self.eat(TokenType::LeftParen) {
+            let exp = self.expr();
+            self.eat(TokenType::RightParen);
+            return exp;
+        }
         // TODO: throw error here
         return Box::new(Literal::new(Token::new(TokenType::Unknown, "".to_string())));
     }
@@ -73,6 +82,14 @@ impl Parser {
         self.peek().token_type == TokenType::Eof
     }
 
+    fn eat(&mut self, token_type: TokenType) -> bool {
+        if self.match_token(token_type) {
+            self.pull();
+            return true;
+        }
+        return false;
+    }
+    
     fn match_token(&self, token_type: TokenType) -> bool {
         return !self.is_at_end() && self.peek().token_type == token_type;
     }

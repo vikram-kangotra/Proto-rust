@@ -17,7 +17,7 @@ impl ExprVisitor for AstPrinter {
     }
 
     fn visit_unary(&mut self, unary: &Unary) -> f64 {
-        let op = unary.get_operator();
+        let op = unary.get_op();
         let right_val = unary.get_right().accept(self);
         match op.token_type {
             TokenType::Plus => return right_val,
@@ -29,7 +29,7 @@ impl ExprVisitor for AstPrinter {
     fn visit_binary(&mut self, binary: &Binary) -> f64 {
         let left_val = binary.get_left().accept(self);
         let right_val = binary.get_right().accept(self);
-        let op = binary.get_operator();
+        let op = binary.get_op();
         match op.token_type {
             TokenType::Plus => return left_val + right_val,
             TokenType::Minus => return left_val - right_val,

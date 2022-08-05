@@ -1,4 +1,4 @@
-use crate::token::{Token};
+use crate::token::Token;
 
 pub trait ExprVisitor {
     fn visit_literal(&mut self, literal: &Literal) -> f64;
@@ -11,15 +11,13 @@ pub trait Expr {
 }
 
 pub struct Literal {
-    token: Token
+    token: Token,
 }
 
 impl Literal {
-
     pub fn new(token: Token) -> Self {
-        Self { token }
+        Self {  token, }
     }
-
     pub fn get_token(&self) -> &Token { &self.token }
 }
 
@@ -31,16 +29,14 @@ impl Expr for Literal {
 
 pub struct Unary {
     op: Token,
-    right: Box<dyn Expr>
+    right: Box<dyn Expr>,
 }
 
 impl Unary {
-
     pub fn new(op: Token, right: Box<dyn Expr>) -> Self {
-        Self { op, right }
+        Self {  op,  right, }
     }
-
-    pub fn get_operator(&self) -> &Token { &self.op }
+    pub fn get_op(&self) -> &Token { &self.op }
     pub fn get_right(&self) -> &Box<dyn Expr> { &self.right }
 }
 
@@ -51,19 +47,17 @@ impl Expr for Unary {
 }
 
 pub struct Binary {
-    op: Token,
     left: Box<dyn Expr>,
-    right: Box<dyn Expr>
+    op: Token,
+    right: Box<dyn Expr>,
 }
 
 impl Binary {
-
     pub fn new(left: Box<dyn Expr>, op: Token, right: Box<dyn Expr>) -> Self {
-        Self { op, left, right }
+        Self {  left,  op,  right, }
     }
-
-    pub fn get_operator(&self) -> &Token { &self.op }
     pub fn get_left(&self) -> &Box<dyn Expr> { &self.left }
+    pub fn get_op(&self) -> &Token { &self.op }
     pub fn get_right(&self) -> &Box<dyn Expr> { &self.right }
 }
 
@@ -72,3 +66,4 @@ impl Expr for Binary {
         return visitor.visit_binary(self);
     }
 }
+

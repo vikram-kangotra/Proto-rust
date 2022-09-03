@@ -153,11 +153,33 @@ impl Lexer {
         while self.peek().is_alphabetic() || self.peek().is_digit(10) { 
             self.advance(); 
         }
-        return Token::new(TokenType::Identifier, 
-                          self.input.chars()
+
+        let iden: String = self.input.chars()
                             .skip(self.start)
                             .take(self.current - self.start)
-                            .collect());
+                            .collect();
+
+        match iden.as_str() {
+            "and" => return Token::new(TokenType::And, "and".to_owned()),
+            "class" => return Token::new(TokenType::Class, "class".to_owned()),
+            "else" => return Token::new(TokenType::Else, "else".to_owned()),
+            "false" => return Token::new(TokenType::False, "false".to_owned()),
+            "fun" => return Token::new(TokenType::Fun, "fun".to_owned()),
+            "for" => return Token::new(TokenType::For, "for".to_owned()),
+            "if" => return Token::new(TokenType::If, "if".to_owned()),
+            "nil" => return Token::new(TokenType::Nil, "nil".to_owned()),
+            "or" => return Token::new(TokenType::Or, "or".to_owned()),
+            "print" => return Token::new(TokenType::Print, "print".to_owned()),
+            "return" => return Token::new(TokenType::Return, "return".to_owned()),
+            "super" => return Token::new(TokenType::Super, "super".to_owned()),
+            "this" => return Token::new(TokenType::This, "this".to_owned()),
+            "true" => return Token::new(TokenType::True, "true".to_owned()),
+            "var" => return Token::new(TokenType::Var, "var".to_owned()),
+            "while" => return Token::new(TokenType::While, "while".to_owned()),
+            _ => {}
+        }
+
+        return Token::new(TokenType::Identifier, iden);
     }
 
     fn number(&mut self) -> Token { 

@@ -4,20 +4,20 @@ fn define_visitor(code: &mut String, base_name: &str, fields: &[&str]) {
     *code = format!("{}pub trait {}Visitor {{\n", code, base_name);
     for field in fields {
         let type_name = field.split('!').next().unwrap();
-        *code = format!("{}    fn visit_{}(&mut self, {}: &{}) -> f64;\n", code, type_name.to_lowercase(), type_name.to_lowercase(), type_name);
+        *code = format!("{}    fn visit_{}(&mut self, {}: &{}{}) -> f64;\n", code, type_name.to_lowercase(), type_name.to_lowercase(), type_name, base_name);
     }
     *code = format!("{}}}\n\n", code);
 }
 
 fn define_type(code: &mut String, base_name: &str, class_name: &str, field_name: &str) {
-    *code = format!("{}pub struct {} {{\n", code, class_name);
+    *code = format!("{}pub struct {}{} {{\n", code, class_name, base_name);
     let some = field_name.split(',');
     for field in some {
         *code = format!("{}    {},\n", code, field.trim());
     }
     *code = format!("{}}}\n\n", code);
 
-    *code = format!("{}impl {} {{\n", code, class_name);
+    *code = format!("{}impl {}{} {{\n", code, class_name, base_name);
     *code = format!("{}    pub fn new({}) -> Self {{\n", code, field_name);
     *code = format!("{}        Self {{ ", code);
     let some = field_name.split(',');
@@ -39,7 +39,7 @@ fn define_type(code: &mut String, base_name: &str, class_name: &str, field_name:
 
     *code = format!("{}}}\n\n", code);
 
-    *code = format!("{}impl {} for {} {{\n", code, base_name, class_name);
+    *code = format!("{}impl {} for {}{} {{\n", code, base_name, class_name, base_name);
     *code = format!("{}    fn accept(&self, visitor: &mut dyn {}Visitor) -> f64 {{\n", code, base_name);
     *code = format!("{}        return visitor.visit_{}(self);\n", code, class_name.to_lowercase());
     *code = format!("{}    }}\n", code);
@@ -71,6 +71,13 @@ fn main() {
             "Literal! token: Token",
             "Unary! op: Token, right: Box<dyn Expr>",
             "Binary! left: Box<dyn Expr>, op: Token, right: Box<dyn Expr>",
+        ]
+    );
+
+    define_ast(&mut code, "Stmt",
+        &[
+            "Expression! expression: Box<dyn Expr>",
+            "Print! expression: Box<dyn Expr>"
         ]
     );
 

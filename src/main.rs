@@ -7,22 +7,21 @@ mod lexer;
 mod token;
 mod expr;
 mod parser;
-mod ast_printer;
+mod interpreter;
 
 use crate::lexer::Lexer;
 use crate::parser::Parser;
-use crate::ast_printer::AstPrinter;
+use crate::interpreter::Interpreter;
 
 fn eval(code: &str) {
     let mut lexer = Lexer::new(code.to_owned());
 
     let tokens = lexer.tokens();
     let mut parser = Parser::new(tokens);
-    let expr = parser.parse();
+    let statements = parser.parse();
 
-    let mut ast_printer = AstPrinter{};
-
-    print!("{}", ast_printer.eval(&expr));
+    let mut interpreter = Interpreter::new();
+    interpreter.interpret(&statements);
 }
 
 fn repl() {
@@ -33,6 +32,7 @@ fn repl() {
         io::stdout().flush().unwrap();
         io::stdin().read_line(&mut code).unwrap();
         eval(&code);
+        println!()
     }
 }
 
